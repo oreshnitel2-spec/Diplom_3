@@ -2,7 +2,7 @@
 from pages.feed_page import FeedPage
 from pages.login_page import LoginPage
 from pages.constructor_page import ConstructorPage
-from data import USER_LOGIN, USER_PASSWORD, INGREDIENT_NAME
+from data import INGREDIENT_NAME
 import allure
 
 
@@ -18,12 +18,12 @@ class TestFeedPage:
 
     @allure.feature("Страница Лента Заказов")
     @allure.title("Создание заказа увеличивает общее количество заказов")
-    def test_order_creation_increases_total_count_is_success(self, driver):
+    def test_order_creation_increases_total_count_is_success(self, driver, user):
         feed_page = FeedPage(driver)
         feed_page.click_feed_tab()
         before = feed_page.get_total_orders_count()
         login_page = LoginPage(driver)
-        login_page.login(USER_LOGIN, USER_PASSWORD)
+        login_page.login(user["email"], user["password"])
         constructor_page = ConstructorPage(driver)
         constructor_page.create_order(INGREDIENT_NAME)
         constructor_page.get_order_number_from_modal()
@@ -35,12 +35,12 @@ class TestFeedPage:
 
     @allure.feature("Страница Лента Заказов")
     @allure.title("Создание заказа увеличивает количество заказов за сегодня")
-    def test_order_creation_increases_today_count_is_success(self, driver):
+    def test_order_creation_increases_today_count_is_success(self, driver, user):
         feed_page = FeedPage(driver)
         feed_page.click_feed_tab()
         before = feed_page.get_today_orders_count()
         login_page = LoginPage(driver)
-        login_page.login(USER_LOGIN, USER_PASSWORD)
+        login_page.login(user["email"], user["password"])
         constructor_page = ConstructorPage(driver)
         constructor_page.create_order(INGREDIENT_NAME)
         constructor_page.get_order_number_from_modal()
@@ -52,11 +52,11 @@ class TestFeedPage:
 
     @allure.feature("Страница Лента Заказов")
     @allure.title("Появление созданного заказа в Ленте Заказов")
-    def test_order_appears_in_feed_after_creation_is_success(self, driver):
+    def test_order_appears_in_feed_after_creation_is_success(self, driver, user):
         feed_page = FeedPage(driver)
         feed_page.click_feed_tab()
         login_page = LoginPage(driver)
-        login_page.login(USER_LOGIN, USER_PASSWORD)
+        login_page.login(user["email"], user["password"])
         constructor_page = ConstructorPage(driver)
         constructor_page.create_order(INGREDIENT_NAME)
         order_number = constructor_page.get_order_number_from_modal()
