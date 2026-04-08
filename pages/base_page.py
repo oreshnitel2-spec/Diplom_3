@@ -36,10 +36,6 @@ class BasePage:
         return WebDriverWait(self.driver, timeout).until(
             EC.invisibility_of_element_located(locator)
         )
-    
-    @allure.step("Клик по кнопке Личный Кабинет")
-    def click_personal_account_button(self):
-        self.click(PERSONAL_ACCOUNT_BUTTON)
 
     @allure.step("Отправка текста в элемент")
     def send_keys(self, locator, text):
@@ -53,7 +49,6 @@ class BasePage:
     
     @allure.step("Ожидание видимости элемента")
     def wait_for_visibility(self, locator, timeout=10):
-        """Ожидание видимости элемента"""
         return WebDriverWait(self.driver, timeout).until(
             EC.visibility_of_element_located(locator)
         )

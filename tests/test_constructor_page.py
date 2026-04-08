@@ -1,6 +1,7 @@
 import allure
 
 from pages.constructor_page import ConstructorPage
+from pages.feed_page import FeedPage
 from urls import BASE_URL
 from data import INGREDIENT_NAME, EXPECTED_INGREDIENT_PRICE
 
@@ -10,7 +11,8 @@ class TestConstructorPage:
     def test_open_constructor_page_is_success(self, driver):
         constructor_page = ConstructorPage(driver)
         constructor_page.click_feed_tab()
-        constructor_page.click_constructor_tab()
+        feed_page = FeedPage(driver)
+        feed_page.click_constructor_tab()
         assert constructor_page.current_url().rstrip("/") == BASE_URL, "Не открылась страница Конструктор"
 
     @allure.feature("Страница Конструктор")

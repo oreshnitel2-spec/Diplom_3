@@ -11,10 +11,10 @@ class TestFeedPage:
     @allure.feature("Страница Лента Заказов")
     @allure.title("Открытие страницы ленты заказов")
     def test_open_feed_page_is_success(self, driver):
-        feed_page = FeedPage(driver)
-        feed_page.click_feed_tab()
+        constructor_page = ConstructorPage(driver)
+        constructor_page.click_feed_tab()
         with allure.step("Проверка URL"):
-            assert "/feed" in feed_page.current_url(), "Не открылась страница Лента Заказов"
+            assert "/feed" in constructor_page.current_url(), "Не открылась страница Лента Заказов"
 
     @allure.feature("Страница Лента Заказов")
     @allure.title("Создание заказа увеличивает общее количество заказов")
