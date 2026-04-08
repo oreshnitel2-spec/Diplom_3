@@ -22,14 +22,14 @@ class BasePage:
     @allure.step("Клик по элементу")
     def click(self, locator):
         self.find_element(locator).click()
-
+        
+    @allure.step("Поиск всех элементов")
+    def find_elements(self, locator):
+        return self.driver.find_elements(*locator)
+    
     @allure.step("Клик по вкладке Конструктор")
     def click_constructor_tab(self):
         self.click(CONSTRUCTOR_TAB)
-
-    @allure.step("Клик по вкладке Лента Заказов")
-    def click_feed_tab(self):
-        self.js_click(FEED_TAB)
 
     @allure.step("Ожидание невидимости элемента")
     def wait_until_not_visible(self, locator, timeout=5):
@@ -51,6 +51,7 @@ class BasePage:
     def get_text(self, locator):
         return self.find_element(locator).text
     
+    @allure.step("Ожидание видимости элемента")
     def wait_for_visibility(self, locator, timeout=10):
         """Ожидание видимости элемента"""
         return WebDriverWait(self.driver, timeout).until(
@@ -69,30 +70,12 @@ class BasePage:
     def js_click(self, locator):
         element = self.find_element(locator)
         self.driver.execute_script("arguments[0].click();", element)
+   
 
-    @allure.step("Ожидание изменения текста элемента")
-    def wait_for_text_change(self, locator, check_func, timeout=10):
-        element = self.wait_for_visibility(locator, timeout)
+    @allure.step("Ожидание выполнения условия")
+    def wait_until(self, condition_function, timeout=10):
+        return WebDriverWait(self.driver, timeout).until(condition_function)
     
-        def _text_changed(driver):
-            text = element.text.strip()
-            return check_func(text)
-
-        WebDriverWait(self.driver, timeout).until(_text_changed)
-        return element.text.strip()
-    
-    @allure.step("Ожидание появления номера в списке")
-    def wait_for_order_number_in_feed(self, locator,order_number_feed: str, timeout=15) -> str:
-
-        def _check_numbers(driver):
-            elements = driver.find_elements(*locator)
-            for el in elements:
-                text = el.text.strip()
-                if text.isdigit() and text == order_number_feed:
-                    return text  
-            return False  
-
-        return WebDriverWait(self.driver, timeout).until(_check_numbers)
 
     @allure.step("Перетаскивание элемента с помощью JS")
     def drag_and_drop_js(self, source, target):

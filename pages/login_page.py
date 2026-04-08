@@ -3,8 +3,6 @@ from locators.login_page_locators import EMAIL_INPUT, PASSWORD_INPUT, LOGIN_BUTT
 import allure
 
 class LoginPage(BasePage):
-    def __init__(self, driver):
-        super().__init__(driver)
 
     @allure.step("Ввод email в поле для логина")
     def enter_email(self, email: str):

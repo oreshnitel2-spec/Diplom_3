@@ -1,11 +1,11 @@
 import allure
 
+from locators.base_page_locators import FEED_TAB
 from pages.base_page import BasePage
 from locators.constructor_page_locators import  BURGER_BUN_DROP_AREA, INGREDIENT_MODAL_TITLE, INGREDIENT_MODAL_CLOSE_BUTTON, ORDER_BUTTON, ORDER_MODAL_CLOSE_BUTTON, ORDER_NUMBER, ingredient_image_by_alt, ingredient_image_by_alt, ingredient_name_in_modal_by_text, ingredient_price_in_constructor_by_alt
 
 class ConstructorPage(BasePage):
-    def __init__(self, driver):
-        super().__init__(driver)
+
 
     @allure.step("Клик по ингредиенту: {alt_text}")
     def click_ingredient_by_alt(self, alt_text: str):
@@ -66,3 +66,18 @@ class ConstructorPage(BasePage):
     @allure.step("Получение номера заказа из модального окна")
     def get_order_number_from_modal(self):
         return self.wait_for_text_change(ORDER_NUMBER,check_func=lambda text: text != "9999" and text != "")
+    
+    @allure.step("Ожидание изменения текста элемента")
+    def wait_for_text_change(self, locator, check_func, timeout=10):
+        element = self.wait_for_visibility(locator, timeout)
+    
+        def _text_changed(driver):
+            text = element.text.strip()
+            return check_func(text)
+
+        self.wait_until(_text_changed, timeout)
+        return element.text.strip()
+    
+    @allure.step("Клик по вкладке Лента Заказов")
+    def click_feed_tab(self):
+        self.js_click(FEED_TAB)
