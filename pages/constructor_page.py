@@ -81,3 +81,11 @@ class ConstructorPage(BasePage):
     @allure.step("Клик по вкладке Лента Заказов")
     def click_feed_tab(self):
         self.js_click(FEED_TAB)
+
+    @allure.step("Создать заказ и вернуться на вкладку Лента")
+    def create_order_and_return_to_feed(self, ingredient_name):
+        self.create_order(ingredient_name)
+        self.get_order_number_from_modal()
+        self.wait_and_close_order_modal()
+        self.click_feed_tab()
+        

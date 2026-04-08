@@ -1,8 +1,9 @@
 
+import pytest
 from pages.feed_page import FeedPage
 from pages.login_page import LoginPage
 from pages.constructor_page import ConstructorPage
-from data import INGREDIENT_NAME
+from data import INGREDIENT_NAME, PARAMETRIZE_ORDER_COUNTER
 import allure
 
 
@@ -16,40 +17,29 @@ class TestFeedPage:
         with allure.step("Проверка URL"):
             assert "/feed" in constructor_page.current_url(), "Не открылась страница Лента Заказов"
 
+
+    @pytest.mark.parametrize("counter_method, allure_step_name, title", PARAMETRIZE_ORDER_COUNTER)
     @allure.feature("Страница Лента Заказов")
-    @allure.title("Создание заказа увеличивает общее количество заказов")
-    def test_order_creation_increases_total_count_is_success(self, driver, user):
+    @allure.title("Создание заказа увеличивает счетчик")
+    def test_order_creation_increases_counter(self,driver, user, counter_method, allure_step_name, title):
+        allure.dynamic.title(title)
+    
         constructor_page = ConstructorPage(driver)
         constructor_page.click_feed_tab()
+    
         feed_page = FeedPage(driver)
-        before = feed_page.get_total_orders_count()
+        before = getattr(feed_page, counter_method)()
+    
         login_page = LoginPage(driver)
         login_page.login(user["email"], user["password"])
-        constructor_page = ConstructorPage(driver)
-        constructor_page.create_order(INGREDIENT_NAME)
-        constructor_page.get_order_number_from_modal()
-        constructor_page.wait_and_close_order_modal()
-        constructor_page.click_feed_tab()
-        after = feed_page.get_total_orders_count()
-        with allure.step("Проверяем обновление счетчика"):
-            assert after > before, "Количество заказов не увеличилось после создания нового заказа"
-
-    @allure.feature("Страница Лента Заказов")
-    @allure.title("Создание заказа увеличивает количество заказов за сегодня")
-    def test_order_creation_increases_today_count_is_success(self, driver, user):
-        constructor_page = ConstructorPage(driver)
-        constructor_page.click_feed_tab()
-        feed_page = FeedPage(driver)
-        before = feed_page.get_today_orders_count()
-        login_page = LoginPage(driver)
-        login_page.login(user["email"], user["password"])    
-        constructor_page.create_order(INGREDIENT_NAME)
-        constructor_page.get_order_number_from_modal()
-        constructor_page.wait_and_close_order_modal()
-        constructor_page.click_feed_tab()
-        after = feed_page.get_today_orders_count()
-        with allure.step("Проверяем счетчик за сегодня"):
-            assert after > before, "Количество заказов за сегодня не увеличилось после создания нового заказа"
+    
+        constructor_page.create_order_and_return_to_feed(INGREDIENT_NAME)
+        
+        after = getattr(feed_page, counter_method)()
+    
+        with allure.step(allure_step_name):
+            assert after > before, f"{allure_step_name} не увеличился после создания нового заказа"
+        
 
     @allure.feature("Страница Лента Заказов")
     @allure.title("Появление созданного заказа в Ленте Заказов")
